@@ -1,5 +1,7 @@
 package com.fnozoy.model.entity;
 
+import com.fnozoy.model.enums.EntryCode;
+import com.fnozoy.model.enums.EntryStatusCode;
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
@@ -7,7 +9,6 @@ import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Objects;
 
 @Entity
 @Table(name="mw010entries", schema="wallet")

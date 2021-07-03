@@ -1,4 +1,4 @@
-package com.fnozoy.model.entity;
+package com.fnozoy.model.enums;
 
 public enum EntryCode {
     INCOME,
