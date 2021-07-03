@@ -5,7 +5,7 @@ My Wallet demo application with Java, Springboot, Postgresql, React JS
 ## `Use Cases`
 
 ## Login
-User may exists or not.<br />
+User may exist or not.<br />
 In case the user exists it will be possible to login with email and password. <br />
 There will be a form for new users signup. <br />
 
