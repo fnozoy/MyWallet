@@ -1,4 +1,4 @@
-package com.fnozoy.model.enums;
+package com.fnozoy.myWallet.model.enums;
 
 public enum EntryCode {
     INCOME,

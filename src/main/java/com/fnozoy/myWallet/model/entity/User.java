@@ -1,4 +1,4 @@
-package com.fnozoy.model.entity;
+package com.fnozoy.myWallet.model.entity;
 
 import lombok.*;
 
@@ -9,7 +9,7 @@ import java.util.Objects;
 @Table(name="mw001user", schema="wallet")
 @Data
 @Builder
-public class Mw001user {
+public class User {
 
 /*
     CREATE TABLE wallet.mw001user
@@ -25,15 +25,15 @@ public class Mw001user {
     @Id
     @Column(name="mw001_user_k")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long mw001_user_k;
+    private Long Id;
 
     @Column(name="mw001_name_x")
-    private String mw001_name_x;
+    private String name;
 
     @Column(name="mw001_email_c")
-    private String mw001_email_c;
+    private String email;
 
     @Column(name="mw001_password_c")
-    private String mw001_password_c;
+    private String pswd;
 
 }

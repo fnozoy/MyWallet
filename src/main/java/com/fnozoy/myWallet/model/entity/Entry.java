@@ -1,7 +1,7 @@
-package com.fnozoy.model.entity;
+package com.fnozoy.myWallet.model.entity;
 
-import com.fnozoy.model.enums.EntryCode;
-import com.fnozoy.model.enums.EntryStatusCode;
+import com.fnozoy.myWallet.model.enums.EntryCode;
+import com.fnozoy.myWallet.model.enums.EntryStatusCode;
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
@@ -14,7 +14,7 @@ import java.time.LocalDate;
 @Table(name="mw010entries", schema="wallet")
 @Data
 @Builder
-public class Mw100entries {
+public class Entry {
 /*
     CREATE TABLE wallet.mw100entries
     (
@@ -39,34 +39,34 @@ public class Mw100entries {
     @Id
     @Column(name="mw100_entry_k")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long mw100_entry_k;
+    private Long Id;
 
     @Column(name="mw100_entry_x")
-    private String mw100_entry_x;
+    private String description;
 
-    @Column(name="mw100_entry_x")
-    private Integer mw100_month_c;
+    @Column(name="mw100_month_c")
+    private Integer month;
 
     @Column(name="mw100_year_c")
-    private Integer mw100_year_c;
+    private Integer year;
 
     @Column(name="mw100_value_a")
-    private BigDecimal mw100_value_a;
+    private BigDecimal value;
 
     @Column(name="mw100_entry_c")
     @Enumerated(value=EnumType.STRING)
-    private EntryCode mw100_entry_c;
+    private EntryCode entryCode;
 
     @Column(name="mw100_status_c")
     @Enumerated(value=EnumType.STRING)
-    private EntryStatusCode mw100_status_c;
+    private EntryStatusCode entryStatusCode;
 
     @Column(name="wm100_create_y")
     @Convert(converter= Jsr310JpaConverters.LocalDateConverter.class)
-    private LocalDate wm100_create_y;
+    private LocalDate createDate;
 
     @ManyToOne
     @JoinColumn(name="mw100_mw001_user_k")
-    private Mw001user Mw001user;
+    private User Mw001user;
 
 }
