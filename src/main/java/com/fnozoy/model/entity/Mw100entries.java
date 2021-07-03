@@ -1,5 +1,7 @@
 package com.fnozoy.model.entity;
 
+import lombok.Builder;
+import lombok.Data;
 import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
 
 import javax.persistence.*;
@@ -9,6 +11,8 @@ import java.util.Objects;
 
 @Entity
 @Table(name="mw010entries", schema="wallet")
+@Data
+@Builder
 public class Mw100entries {
 /*
     CREATE TABLE wallet.mw100entries
@@ -64,104 +68,4 @@ public class Mw100entries {
     @JoinColumn(name="mw100_mw001_user_k")
     private Mw001user Mw001user;
 
-
-    public Long getMw100_entry_k() {
-        return mw100_entry_k;
-    }
-
-    public void setMw100_entry_k(Long mw100_entry_k) {
-        this.mw100_entry_k = mw100_entry_k;
-    }
-
-    public String getMw100_entry_x() {
-        return mw100_entry_x;
-    }
-
-    public void setMw100_entry_x(String mw100_entry_x) {
-        this.mw100_entry_x = mw100_entry_x;
-    }
-
-    public Integer getMw100_month_c() {
-        return mw100_month_c;
-    }
-
-    public void setMw100_month_c(Integer mw100_month_c) {
-        this.mw100_month_c = mw100_month_c;
-    }
-
-    public Integer getMw100_year_c() {
-        return mw100_year_c;
-    }
-
-    public void setMw100_year_c(Integer mw100_year_c) {
-        this.mw100_year_c = mw100_year_c;
-    }
-
-    public BigDecimal getMw100_value_a() {
-        return mw100_value_a;
-    }
-
-    public void setMw100_value_a(BigDecimal mw100_value_a) {
-        this.mw100_value_a = mw100_value_a;
-    }
-
-    public EntryCode getMw100_entry_c() {
-        return mw100_entry_c;
-    }
-
-    public void setMw100_entry_c(EntryCode mw100_entry_c) {
-        this.mw100_entry_c = mw100_entry_c;
-    }
-
-    public EntryStatusCode getMw100_status_c() {
-        return mw100_status_c;
-    }
-
-    public void setMw100_status_c(EntryStatusCode mw100_status_c) {
-        this.mw100_status_c = mw100_status_c;
-    }
-
-    public LocalDate getWm100_create_y() {
-        return wm100_create_y;
-    }
-
-    public void setWm100_create_y(LocalDate wm100_create_y) {
-        this.wm100_create_y = wm100_create_y;
-    }
-
-    public com.fnozoy.model.entity.Mw001user getMw001user() {
-        return Mw001user;
-    }
-
-    public void setMw001user(com.fnozoy.model.entity.Mw001user mw001user) {
-        Mw001user = mw001user;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Mw100entries)) return false;
-        Mw100entries that = (Mw100entries) o;
-        return getMw100_entry_k().equals(that.getMw100_entry_k()) && getMw100_entry_x().equals(that.getMw100_entry_x()) && getMw100_month_c().equals(that.getMw100_month_c()) && getMw100_year_c().equals(that.getMw100_year_c()) && getMw100_value_a().equals(that.getMw100_value_a()) && getMw100_entry_c() == that.getMw100_entry_c() && getMw100_status_c() == that.getMw100_status_c() && getWm100_create_y().equals(that.getWm100_create_y()) && getMw001user().equals(that.getMw001user());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getMw100_entry_k(), getMw100_entry_x(), getMw100_month_c(), getMw100_year_c(), getMw100_value_a(), getMw100_entry_c(), getMw100_status_c(), getWm100_create_y(), getMw001user());
-    }
-
-    @Override
-    public String toString() {
-        return "Mw100entries{" +
-                "mw100_entry_k=" + mw100_entry_k +
-                ", mw100_entry_x='" + mw100_entry_x + '\'' +
-                ", mw100_month_c=" + mw100_month_c +
-                ", mw100_year_c=" + mw100_year_c +
-                ", mw100_value_a=" + mw100_value_a +
-                ", mw100_entry_c=" + mw100_entry_c +
-                ", mw100_status_c=" + mw100_status_c +
-                ", wm100_create_y=" + wm100_create_y +
-                ", Mw001user=" + Mw001user +
-                '}';
-    }
 }
