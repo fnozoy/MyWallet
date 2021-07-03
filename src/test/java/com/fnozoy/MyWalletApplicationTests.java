@@ -1,4 +1,4 @@
-package com.fnozoy.myWallet;
+package com.fnozoy;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

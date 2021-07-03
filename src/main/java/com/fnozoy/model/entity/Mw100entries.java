@@ -1,6 +1,5 @@
-package com.fnozoy.myWallet.model.entity;
+package com.fnozoy.model.entity;
 
-import org.springframework.data.convert.Jsr310Converters;
 import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
 
 import javax.persistence.*;
@@ -130,11 +129,11 @@ public class Mw100entries {
         this.wm100_create_y = wm100_create_y;
     }
 
-    public com.fnozoy.myWallet.model.entity.Mw001user getMw001user() {
+    public com.fnozoy.model.entity.Mw001user getMw001user() {
         return Mw001user;
     }
 
-    public void setMw001user(com.fnozoy.myWallet.model.entity.Mw001user mw001user) {
+    public void setMw001user(com.fnozoy.model.entity.Mw001user mw001user) {
         Mw001user = mw001user;
     }
 

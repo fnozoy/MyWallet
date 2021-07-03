@@ -1,4 +1,4 @@
-package com.fnozoy.myWallet.model.entity;
+package com.fnozoy.model.entity;
 
 import javax.persistence.*;
 import java.util.Objects;
