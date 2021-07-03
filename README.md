@@ -15,8 +15,8 @@ It'll be required name, email and password.<br />
 Email must be unique.<br />
 
 ## Debits and Credits entries
-App will allow the CRUD for incomes and outcomes of the month with date, value, description and type<br />
+App will allow the CRUD for incomes and outcomes of the month with date, value, description and entry type<br />
 For every entry it will be necessary to approve or reject <br />
-Users will have a report to filter by </b>year, month, description or debit type</b>.<br />
+Users will have a report to filter by </b>year, month, description or entry type</b>.<br />
 
 ## `building in course`
