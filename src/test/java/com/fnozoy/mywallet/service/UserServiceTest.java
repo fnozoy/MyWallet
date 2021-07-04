@@ -1,20 +1,18 @@
 package com.fnozoy.mywallet.service;
 
+import com.fnozoy.myWallet.exceptions.AutenticationErrorException;
 import com.fnozoy.myWallet.exceptions.BusinessRuleException;
 import com.fnozoy.myWallet.model.entity.User;
 import com.fnozoy.myWallet.model.repository.UserRepository;
 import com.fnozoy.myWallet.service.UserService;
 import com.fnozoy.myWallet.service.impl.UserServiceImpl;
-import org.aspectj.lang.annotation.Before;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+
+import java.util.Optional;
 
 import static org.mockito.Mockito.*;
 
@@ -23,31 +21,77 @@ import static org.mockito.Mockito.*;
 @ActiveProfiles("test")
 public class UserServiceTest {
 
-    UserRepository userRepository;
-    UserService userService;
+    UserRepository userRepository = mock(UserRepository.class);;
+    UserService userService = new UserServiceImpl(userRepository);
+    //UserServiceImpl userService = spy(UserServiceImpl.class);
 
-
-    @Before("")
-    public void setUp(){
-        userRepository = mock(UserRepository.class);
-        userService = new UserServiceImpl(userRepository);
-    }
 
     @Test
     public void validateExistingEmailReturnVoid(){
-        Mockito.when(userRepository.existsByEmail(Mockito.anyString())).thenReturn(false);
-//        doNothing().when(userService).validateSingleEmail(anyString());
-//        userService.validateSingleEmail("useridxx@email.com");
-        verify(userService, times(1)).validateSingleEmail("useridxx@email.com");
+        when(userRepository.existsByEmail(Mockito.anyString())).thenReturn(false);
+        userService.validateSingleEmail("whatever@email.com");
+    }
+
+    @Test
+    public void emailAlreadyExistsThrowError(){
+        when(userRepository.existsByEmail(Mockito.anyString())).thenReturn(true);
+        Assertions.assertThrows(BusinessRuleException.class, () -> {
+            userService.validateSingleEmail("whatever@email.com");
+        });
+    }
+
+    @Test
+    public void autenticateFailureDueToUnexistingEmail(){
+        when(userRepository.findByEmail(Mockito.anyString())).thenReturn(Optional.empty());
+
+        Assertions.assertThrows(AutenticationErrorException.class, () -> {
+            userService.autenticate("whatever@email.com", "123465");
+        });
+    }
+
+    @Test
+    public void autenticateFailureDueToNotMatchingPassword(){
+        User user = User.builder().email("whatever@email.com").name("JohnDo").pswd("123456").Id(1l).build();
+        when(userRepository.findByEmail(Mockito.anyString())).thenReturn(Optional.of(user));
+
+        Assertions.assertThrows(AutenticationErrorException.class, () -> {
+            userService.autenticate("whatever@email.com", "wrongpassword");
+        });
+    }
+
+    @Test
+    public void autenticateSuccessfull(){
+
+        User user = User.builder().email("whatever@email.com").name("JohnDo").pswd("123456").Id(1l).build();
+        when(userRepository.findByEmail(Mockito.anyString())).thenReturn(Optional.of(user));
+
+        User userAssert = userService.autenticate("whatever@email.com", "123456");
+        org.assertj.core.api.Assertions.assertThat(userAssert).isNotNull();
     }
 
 
     @Test
-    public void emailAlreadyExistsThrowError(){
-        Mockito.when(userRepository.existsByEmail(Mockito.anyString())).thenReturn(true);
-        Assertions.assertThrows(BusinessRuleException.class, () -> {
-            userService.validateSingleEmail("userid@email.com");
-        });
+    public void signupUserWithSuccess(){
+        User user = User.builder().email("whatever@email.com").name("JohnDo").pswd("123456").Id(1l).build();
+        when(userRepository.save(any(User.class))).thenReturn(user);
+
+        User userAssert = userService.signupUser(user);
+        org.assertj.core.api.Assertions.assertThat(userAssert).isNotNull();
+        org.assertj.core.api.Assertions.assertThat(userAssert.getId()).isEqualTo(1l);
+        org.assertj.core.api.Assertions.assertThat(userAssert.getEmail()).isEqualTo("whatever@email.com");
+        org.assertj.core.api.Assertions.assertThat(userAssert.getName()).isEqualTo("JohnDo");
+        org.assertj.core.api.Assertions.assertThat(userAssert.getPswd()).isEqualTo("123456");
     }
 
+    @Test
+    public void signupFailureDueToAlreadyExistingEmail(){
+        when(userRepository.existsByEmail(Mockito.anyString())).thenReturn(true);
+
+        User user = User.builder().email("whatever@email.com").name("JohnDo").pswd("123456").Id(1l).build();
+        when(userRepository.save(any(User.class))).thenReturn(user);
+
+        Assertions.assertThrows(BusinessRuleException.class, () -> {
+            userService.signupUser(user);
+        });
+    }
 }
