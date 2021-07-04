@@ -12,8 +12,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.naming.AuthenticationException;
-
 @RestController
 @RequestMapping
 public class UserController {
@@ -33,7 +31,7 @@ public class UserController {
                 .build();
         try {
             User userAuthenticated = userService.authenticate(userDTO.getEmail(), userDTO.getPswd());
-            return new ResponseEntity(userDTO, HttpStatus.ACCEPTED);
+            return new ResponseEntity(userAuthenticated, HttpStatus.OK);
         } catch (AutenticationErrorException e){
             return ResponseEntity.badRequest().body("User cannot sign in. " + e.getMessage());
         }

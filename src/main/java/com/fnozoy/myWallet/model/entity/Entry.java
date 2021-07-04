@@ -71,6 +71,6 @@ public class Entry {
 
     @ManyToOne
     @JoinColumn(name="mw100_mw001_user_k")
-    private User Mw001user;
+    private User user;
 
 }
