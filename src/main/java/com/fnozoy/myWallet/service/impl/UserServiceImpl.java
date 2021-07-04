@@ -22,7 +22,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User autenticate(String email, String password) {
+    public User authenticate(String email, String password) {
         Optional<User> user = userRepository.findByEmail(email);
 
         if (!user.isPresent()){
@@ -47,7 +47,7 @@ public class UserServiceImpl implements UserService {
     public void validateSingleEmail(String email) {
         boolean exists = userRepository.existsByEmail(email);
         if (exists){
-            throw new BusinessRuleException("Informed email already exists.");
+            throw new BusinessRuleException("Email already exists.");
         }
     }
 }

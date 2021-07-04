@@ -9,6 +9,8 @@ import java.util.Objects;
 @Table(name="mw001user", schema="wallet")
 @Data
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class User {
 
 /*

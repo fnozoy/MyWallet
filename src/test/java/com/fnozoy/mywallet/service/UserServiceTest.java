@@ -45,7 +45,7 @@ public class UserServiceTest {
         when(userRepository.findByEmail(Mockito.anyString())).thenReturn(Optional.empty());
 
         Assertions.assertThrows(AutenticationErrorException.class, () -> {
-            userService.autenticate("whatever@email.com", "123465");
+            userService.authenticate("whatever@email.com", "123465");
         });
     }
 
@@ -55,7 +55,7 @@ public class UserServiceTest {
         when(userRepository.findByEmail(Mockito.anyString())).thenReturn(Optional.of(user));
 
         Assertions.assertThrows(AutenticationErrorException.class, () -> {
-            userService.autenticate("whatever@email.com", "wrongpassword");
+            userService.authenticate("whatever@email.com", "wrongpassword");
         });
     }
 
@@ -65,7 +65,7 @@ public class UserServiceTest {
         User user = User.builder().email("whatever@email.com").name("JohnDo").pswd("123456").Id(1l).build();
         when(userRepository.findByEmail(Mockito.anyString())).thenReturn(Optional.of(user));
 
-        User userAssert = userService.autenticate("whatever@email.com", "123456");
+        User userAssert = userService.authenticate("whatever@email.com", "123456");
         org.assertj.core.api.Assertions.assertThat(userAssert).isNotNull();
     }
 

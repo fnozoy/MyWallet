@@ -2,8 +2,10 @@ package com.fnozoy.myWallet.model.entity;
 
 import com.fnozoy.myWallet.model.enums.EntryCode;
 import com.fnozoy.myWallet.model.enums.EntryStatusCode;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
 
 import javax.persistence.*;
@@ -14,6 +16,8 @@ import java.time.LocalDate;
 @Table(name="mw010entries", schema="wallet")
 @Data
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Entry {
 /*
     CREATE TABLE wallet.mw100entries
