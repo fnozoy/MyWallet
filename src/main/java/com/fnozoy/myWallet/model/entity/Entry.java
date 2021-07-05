@@ -13,7 +13,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
-@Table(name="mw010entries", schema="wallet")
+@Table(name="mw100entries", schema="wallet")
 @Data
 @Builder
 @AllArgsConstructor

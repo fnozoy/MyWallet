@@ -2,9 +2,12 @@ package com.fnozoy.myWallet.service.impl;
 
 import com.fnozoy.myWallet.exceptions.BusinessRuleException;
 import com.fnozoy.myWallet.model.entity.Entry;
+import com.fnozoy.myWallet.model.entity.User;
+import com.fnozoy.myWallet.model.enums.EntryCode;
 import com.fnozoy.myWallet.model.enums.EntryStatusCode;
 import com.fnozoy.myWallet.model.repository.EntriesRepository;
 import com.fnozoy.myWallet.service.EntryService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
@@ -13,10 +16,12 @@ import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 public class EntryServiceImpl implements EntryService {
 
+    @Autowired
     private EntriesRepository entriesRepository;
 
     public EntryServiceImpl(EntriesRepository entriesRepository) {
@@ -35,14 +40,14 @@ public class EntryServiceImpl implements EntryService {
     @Transactional
     public Entry update(Entry entry) {
         Objects.requireNonNull(entry.getId());
+        validate(entry);
         return entriesRepository.save(entry);
     }
 
     @Override
     @Transactional
-    public void delete(Entry entry) {
-        Objects.requireNonNull(entry.getId());
-        entriesRepository.delete(entry);
+    public void delete(Long id) {
+        entriesRepository.deleteById(id);
     }
 
     @Override
@@ -63,6 +68,11 @@ public class EntryServiceImpl implements EntryService {
         entriesRepository.save(entry);
     }
 
+
+    public Optional<Entry> findById(Long Id){
+        return entriesRepository.findById(Id);
+    }
+
     @Override
     public void validate(Entry entry) {
         if(entry.getDescription() == null || entry.getDescription().trim().equals("")){
@@ -80,8 +90,8 @@ public class EntryServiceImpl implements EntryService {
         if(entry.getValue() == null || entry.getValue().compareTo(BigDecimal.ZERO) < 1)  {
             throw new BusinessRuleException("Value is invalid.");
         }
-        if(entry.getEntryCode() == null)  {
-            throw new BusinessRuleException("Entry type was not informed.");
+        if(entry.getEntryCode() == null || (entry.getEntryCode()!= EntryCode.INCOME && entry.getEntryCode()!= EntryCode.OUTCOME) )  {
+            throw new BusinessRuleException("Entry type is invalid.");
         }
 
 
