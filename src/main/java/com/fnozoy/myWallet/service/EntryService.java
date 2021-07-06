@@ -3,6 +3,7 @@ package com.fnozoy.myWallet.service;
 import com.fnozoy.myWallet.model.entity.Entry;
 import com.fnozoy.myWallet.model.enums.EntryStatusCode;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,4 +16,6 @@ public interface EntryService {
     void updateStatus(Entry entry, EntryStatusCode entryStatusCode);
     void validate(Entry entry);
     Optional<Entry> findById(Long id);
+
+    BigDecimal getBalanceByUserId(Long id);
 }

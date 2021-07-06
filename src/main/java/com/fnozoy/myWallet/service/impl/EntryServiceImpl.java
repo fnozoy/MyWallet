@@ -68,10 +68,23 @@ public class EntryServiceImpl implements EntryService {
         entriesRepository.save(entry);
     }
 
-
+    @Override
     public Optional<Entry> findById(Long Id){
         return entriesRepository.findById(Id);
     }
+
+    @Override
+    public BigDecimal getBalanceByUserId(Long id){
+        BigDecimal balanceIncome = entriesRepository.getBalanceByUserId(id, EntryCode.INCOME, EntryStatusCode.APPROVED);
+        BigDecimal balanceOutcome = entriesRepository.getBalanceByUserId(id, EntryCode.OUTCOME, EntryStatusCode.APPROVED);
+        if (balanceIncome == null){
+            balanceIncome = BigDecimal.ZERO;
+        }
+        if (balanceOutcome == null){
+            balanceOutcome = BigDecimal.ZERO;
+        }
+        return balanceIncome.subtract(balanceOutcome);
+    };
 
     @Override
     public void validate(Entry entry) {

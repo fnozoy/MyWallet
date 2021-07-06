@@ -4,22 +4,25 @@ import com.fnozoy.myWallet.api.dto.UserDTO;
 import com.fnozoy.myWallet.exceptions.AutenticationErrorException;
 import com.fnozoy.myWallet.exceptions.BusinessRuleException;
 import com.fnozoy.myWallet.model.entity.User;
+import com.fnozoy.myWallet.service.EntryService;
 import com.fnozoy.myWallet.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.math.BigDecimal;
+import java.util.Optional;
 
 @RestController
 @RequestMapping
 public class UserController {
 
     private UserService userService;
+    private EntryService entryService;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService, EntryService entryService) {
         this.userService = userService;
+        this.entryService = entryService;
     }
 
     @PostMapping("/api/v1/user/authenticate")
@@ -52,6 +55,19 @@ public class UserController {
         } catch (BusinessRuleException e){
             return ResponseEntity.badRequest().body("User cannot signup. " + e.getMessage());
         }
+
+    }
+
+    @GetMapping("/api/v1/user/getbalance/{id}")
+    public ResponseEntity getBalance (@PathVariable Long id){
+
+        Optional<User> user = userService.findById(id);
+        if (!user.isPresent()){
+            return new ResponseEntity(HttpStatus.NOT_FOUND);
+        }
+
+        BigDecimal balance = entryService.getBalanceByUserId(id);
+        return new ResponseEntity(balance, HttpStatus.OK);
 
     }
 
