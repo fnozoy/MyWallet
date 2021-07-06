@@ -67,7 +67,6 @@ public class UserRepositoryTest {
                 .pswd("123456")
                 .build();
         User userSave = userRepository.save(user);
-        Assertions.assertThat(userSave.getId()).isNotNull();
     }
 
     @Test
