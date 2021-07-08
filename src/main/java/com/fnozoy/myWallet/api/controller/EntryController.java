@@ -5,12 +5,10 @@ import com.fnozoy.myWallet.exceptions.BusinessRuleException;
 import com.fnozoy.myWallet.model.enums.EntryCodeEnum;
 import com.fnozoy.myWallet.model.enums.EntryStatusEnum;
 import com.fnozoy.myWallet.service.EntryService;
-import com.fnozoy.myWallet.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -19,14 +17,10 @@ import java.util.List;
 public class EntryController {
 
     @Autowired
-    private EntryService entryService;
+    private final EntryService entryService;
 
-    @Autowired
-    private UserService userService;
-
-    public EntryController(EntryService entryService, UserService userService) {
+    public EntryController(EntryService entryService) {
         this.entryService = entryService;
-        this.userService = userService;
     }
 
     @PostMapping("/api/v1/entry/create")

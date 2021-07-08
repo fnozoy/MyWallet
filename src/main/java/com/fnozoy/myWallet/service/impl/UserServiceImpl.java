@@ -1,23 +1,20 @@
 package com.fnozoy.myWallet.service.impl;
 
 import com.fnozoy.myWallet.api.dto.UserDTO;
-import com.fnozoy.myWallet.exceptions.AutenticationErrorException;
+import com.fnozoy.myWallet.exceptions.AuthenticationErrorException;
 import com.fnozoy.myWallet.exceptions.BusinessRuleException;
-import com.fnozoy.myWallet.model.entity.Entry;
 import com.fnozoy.myWallet.model.entity.User;
 import com.fnozoy.myWallet.model.repository.UserRepository;
 import com.fnozoy.myWallet.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import javax.transaction.Transactional;
-import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
 
     @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
     public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
@@ -27,18 +24,13 @@ public class UserServiceImpl implements UserService {
     public UserDTO authenticate(UserDTO userDTO) {
 
         User user = userRepository.findByEmail(userDTO.getEmail())
-                .orElseThrow( () -> new AutenticationErrorException("Email not found"));
+                .orElseThrow( () -> new AuthenticationErrorException("Email not found"));
 
         if (!user.getPswd().equals(userDTO.getPswd())){
-            throw new AutenticationErrorException("Password invalid.");
+            throw new AuthenticationErrorException("Password invalid.");
         }
 
         return userDTO;
-    }
-
-    @Override
-    public Optional<User> findById(Long id) {
-        return userRepository.findById(id);
     }
 
     @Override

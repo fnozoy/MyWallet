@@ -1,9 +1,7 @@
 package com.fnozoy.myWallet.model.entity;
 
 import lombok.*;
-
 import javax.persistence.*;
-import java.util.Objects;
 
 @Entity
 @Table(name="mw001user", schema="wallet")

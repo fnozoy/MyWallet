@@ -23,13 +23,14 @@ import java.util.*;
 public class EntryServiceImpl implements EntryService {
 
     @Autowired
-    private EntriesRepository entriesRepository;
+    private final EntriesRepository entriesRepository;
 
     @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    public EntryServiceImpl(EntriesRepository entriesRepository) {
+    public EntryServiceImpl(EntriesRepository entriesRepository, UserRepository userRepository) {
         this.entriesRepository = entriesRepository;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -98,24 +99,19 @@ public class EntryServiceImpl implements EntryService {
                 .orElseThrow( () -> new BusinessRuleException("User does not exist."));
 
         Entry entryFilter = DTOToEntry(entryDTO);
-        Example example = Example.of(entryFilter,
+        Example<Entry> example = Example.of(entryFilter,
                 ExampleMatcher.matching()
                 .withIgnoreCase()
                 .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING));
 
         List<Entry> listEntry = entriesRepository.findAll(example);
-        List<EntryDTO> listEntryDTO = new ArrayList<EntryDTO>();
+        List<EntryDTO> listEntryDTO = new ArrayList<>();
         listEntry.forEach(entry->
                 listEntryDTO.add(entryToDTO(entry))
         );
 
         return listEntryDTO;
 
-    }
-
-    @Override
-    public Optional<Entry> findById(Long Id){
-        return entriesRepository.findById(Id);
     }
 
     @Override
@@ -137,7 +133,7 @@ public class EntryServiceImpl implements EntryService {
             balanceOutcome = BigDecimal.ZERO;
         }
         return balanceIncome.subtract(balanceOutcome);
-    };
+    }
 
     public void validate(EntryDTO entry) {
         if(entry.getDescription() == null || entry.getDescription().trim().equals("")){
@@ -166,7 +162,7 @@ public class EntryServiceImpl implements EntryService {
 
         userRepository.findById(user.getId()).orElseThrow( () -> new BusinessRuleException("User does not exist."));
 
-        Entry entry = Entry.builder()
+        return Entry.builder()
                 .description(entryDTO.getDescription())
                 .month(entryDTO.getMonth())
                 .year(entryDTO.getYear())
@@ -175,13 +171,11 @@ public class EntryServiceImpl implements EntryService {
                 .entryCodeEnum(entryDTO.getEntryCode())
                 .entryStatusEnum(entryDTO.getEntryStatus())
                 .build();
-
-        return entry;
     }
 
     private EntryDTO entryToDTO(Entry entry){
 
-        EntryDTO entryDTO = EntryDTO.builder()
+        return EntryDTO.builder()
                 .id(entry.getId())
                 .description(entry.getDescription())
                 .month(entry.getMonth())
@@ -192,8 +186,6 @@ public class EntryServiceImpl implements EntryService {
                 .entryStatus(entry.getEntryStatusEnum())
                 .createDate(LocalDate.now())
                 .build();
-
-        return entryDTO;
     }
 
 
