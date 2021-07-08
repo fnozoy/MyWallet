@@ -1,7 +1,7 @@
 package com.fnozoy.myWallet.model.entity;
 
-import com.fnozoy.myWallet.model.enums.EntryCode;
-import com.fnozoy.myWallet.model.enums.EntryStatusCode;
+import com.fnozoy.myWallet.model.enums.EntryCodeEnum;
+import com.fnozoy.myWallet.model.enums.EntryStatusEnum;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -59,11 +59,11 @@ public class Entry {
 
     @Column(name="mw100_entry_c")
     @Enumerated(value=EnumType.STRING)
-    private EntryCode entryCode;
+    private EntryCodeEnum entryCodeEnum;
 
     @Column(name="mw100_status_c")
     @Enumerated(value=EnumType.STRING)
-    private EntryStatusCode entryStatusCode;
+    private EntryStatusEnum entryStatusEnum;
 
     @Column(name="wm100_create_y")
     @Convert(converter= Jsr310JpaConverters.LocalDateConverter.class)

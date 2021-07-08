@@ -1,6 +1,6 @@
 package com.fnozoy.myWallet.model.enums;
 
-public enum EntryStatusCode {
+public enum EntryStatusEnum {
     PENDING,
     CANCELED,
     APPROVED

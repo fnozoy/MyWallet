@@ -1,6 +1,6 @@
 package com.fnozoy.myWallet.model.enums;
 
-public enum EntryCode {
+public enum EntryCodeEnum {
     INCOME,
     OUTCOME
 }

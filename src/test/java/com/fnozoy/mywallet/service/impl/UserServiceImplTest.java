@@ -1,5 +1,6 @@
-package com.fnozoy.mywallet.service;
+package com.fnozoy.mywallet.service.impl;
 
+import com.fnozoy.myWallet.api.dto.UserDTO;
 import com.fnozoy.myWallet.exceptions.AutenticationErrorException;
 import com.fnozoy.myWallet.exceptions.BusinessRuleException;
 import com.fnozoy.myWallet.model.entity.User;
@@ -10,21 +11,15 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.test.context.ActiveProfiles;
-
-
 import java.util.Optional;
-
 import static org.mockito.Mockito.*;
 
-//@SpringBootTest
-//@ExtendWith(SpringExtension.class)
+
 @ActiveProfiles("test")
-public class UserServiceTest {
+public class UserServiceImplTest {
 
     UserRepository userRepository = mock(UserRepository.class);;
     UserService userService = new UserServiceImpl(userRepository);
-    //UserServiceImpl userService = spy(UserServiceImpl.class);
-
 
     @Test
     public void validateExistingEmailReturnVoid(){
@@ -43,9 +38,9 @@ public class UserServiceTest {
     @Test
     public void autenticateFailureDueToUnexistingEmail(){
         when(userRepository.findByEmail(Mockito.anyString())).thenReturn(Optional.empty());
-
+        UserDTO userdto = UserDTO.builder().email("whaterver@email.com").pswd("123456").build();
         Assertions.assertThrows(AutenticationErrorException.class, () -> {
-            userService.authenticate("whatever@email.com", "123465");
+            userService.authenticate(userdto);
         });
     }
 
@@ -53,9 +48,9 @@ public class UserServiceTest {
     public void autenticateFailureDueToNotMatchingPassword(){
         User user = User.builder().email("whatever@email.com").name("JohnDo").pswd("123456").Id(1l).build();
         when(userRepository.findByEmail(Mockito.anyString())).thenReturn(Optional.of(user));
-
+        UserDTO userDTO = UserDTO.builder().email(user.getEmail()).name(user.getName()).pswd("654321").build();
         Assertions.assertThrows(AutenticationErrorException.class, () -> {
-            userService.authenticate("whatever@email.com", "wrongpassword");
+            userService.authenticate(userDTO);
         });
     }
 
@@ -64,8 +59,8 @@ public class UserServiceTest {
 
         User user = User.builder().email("whatever@email.com").name("JohnDo").pswd("123456").Id(1l).build();
         when(userRepository.findByEmail(Mockito.anyString())).thenReturn(Optional.of(user));
-
-        User userAssert = userService.authenticate("whatever@email.com", "123456");
+        UserDTO userDTO = UserDTO.builder().email(user.getEmail()).name(user.getName()).pswd(user.getPswd()).build();
+        UserDTO userAssert = userService.authenticate(userDTO);
         org.assertj.core.api.Assertions.assertThat(userAssert).isNotNull();
     }
 
@@ -74,8 +69,13 @@ public class UserServiceTest {
     public void signupUserWithSuccess(){
         User user = User.builder().email("whatever@email.com").name("JohnDo").pswd("123456").Id(1l).build();
         when(userRepository.save(any(User.class))).thenReturn(user);
-
-        User userAssert = userService.signupUser(user);
+        UserDTO userDTO = UserDTO.builder()
+                .id(user.getId())
+                .name(user.getName())
+                .email(user.getEmail())
+                .pswd(user.getPswd())
+                .build();
+        UserDTO userAssert = userService.signupUser(userDTO);
         org.assertj.core.api.Assertions.assertThat(userAssert).isNotNull();
         org.assertj.core.api.Assertions.assertThat(userAssert.getId()).isEqualTo(1l);
         org.assertj.core.api.Assertions.assertThat(userAssert.getEmail()).isEqualTo("whatever@email.com");
@@ -89,9 +89,14 @@ public class UserServiceTest {
 
         User user = User.builder().email("whatever@email.com").name("JohnDo").pswd("123456").Id(1l).build();
         when(userRepository.save(any(User.class))).thenReturn(user);
-
+        UserDTO userDTO = UserDTO.builder()
+                .id(user.getId())
+                .name(user.getName())
+                .email(user.getEmail())
+                .pswd(user.getPswd())
+                .build();
         Assertions.assertThrows(BusinessRuleException.class, () -> {
-            userService.signupUser(user);
+            userService.signupUser(userDTO);
         });
     }
 }

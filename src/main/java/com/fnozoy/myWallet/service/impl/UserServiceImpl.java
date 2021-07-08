@@ -1,7 +1,9 @@
 package com.fnozoy.myWallet.service.impl;
 
+import com.fnozoy.myWallet.api.dto.UserDTO;
 import com.fnozoy.myWallet.exceptions.AutenticationErrorException;
 import com.fnozoy.myWallet.exceptions.BusinessRuleException;
+import com.fnozoy.myWallet.model.entity.Entry;
 import com.fnozoy.myWallet.model.entity.User;
 import com.fnozoy.myWallet.model.repository.UserRepository;
 import com.fnozoy.myWallet.service.UserService;
@@ -22,18 +24,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User authenticate(String email, String password) {
-        Optional<User> user = userRepository.findByEmail(email);
+    public UserDTO authenticate(UserDTO userDTO) {
 
-        if (!user.isPresent()){
-            throw new AutenticationErrorException("Email not found.");
+        User user = userRepository.findByEmail(userDTO.getEmail())
+                .orElseThrow( () -> new AutenticationErrorException("Email not found"));
+
+        if (!user.getPswd().equals(userDTO.getPswd())){
+            throw new AutenticationErrorException("Password invalid.");
         }
 
-        if (!user.get().getPswd().equals(password)){
-            throw new AutenticationErrorException("Email or password invalid.");
-        }
-
-        return user.get();
+        return userDTO;
     }
 
     @Override
@@ -43,16 +43,30 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public User signupUser(User user) {
-        validateSingleEmail(user.getEmail());
-        return userRepository.save(user);
+    public UserDTO signupUser(UserDTO userDTO) {
+
+        validateSingleEmail(userDTO.getEmail());
+        User user = User.builder()
+                .name(userDTO.getName())
+                .email(userDTO.getEmail())
+                .pswd(userDTO.getPswd())
+                .build();
+        user = userRepository.save(user);
+        userDTO = UserDTO.builder()
+                .id(user.getId())
+                .name(user.getName())
+                .email(user.getEmail())
+                .pswd(user.getPswd())
+                .build();
+        return userDTO;
     }
 
     @Override
     public void validateSingleEmail(String email) {
-        boolean exists = userRepository.existsByEmail(email);
-        if (exists){
+
+        if (userRepository.existsByEmail(email)){
             throw new BusinessRuleException("Email already exists.");
         }
+
     }
 }

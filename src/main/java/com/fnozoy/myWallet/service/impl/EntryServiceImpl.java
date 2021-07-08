@@ -1,11 +1,13 @@
 package com.fnozoy.myWallet.service.impl;
 
+import com.fnozoy.myWallet.api.dto.EntryDTO;
 import com.fnozoy.myWallet.exceptions.BusinessRuleException;
 import com.fnozoy.myWallet.model.entity.Entry;
 import com.fnozoy.myWallet.model.entity.User;
-import com.fnozoy.myWallet.model.enums.EntryCode;
-import com.fnozoy.myWallet.model.enums.EntryStatusCode;
+import com.fnozoy.myWallet.model.enums.EntryCodeEnum;
+import com.fnozoy.myWallet.model.enums.EntryStatusEnum;
 import com.fnozoy.myWallet.model.repository.EntriesRepository;
+import com.fnozoy.myWallet.model.repository.UserRepository;
 import com.fnozoy.myWallet.service.EntryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
@@ -14,9 +16,8 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.time.LocalDate;
+import java.util.*;
 
 @Service
 public class EntryServiceImpl implements EntryService {
@@ -24,48 +25,92 @@ public class EntryServiceImpl implements EntryService {
     @Autowired
     private EntriesRepository entriesRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     public EntryServiceImpl(EntriesRepository entriesRepository) {
         this.entriesRepository = entriesRepository;
     }
 
     @Override
     @Transactional
-    public Entry create(Entry entry) {
-        validate(entry);
-        entry.setEntryStatusCode(EntryStatusCode.PENDING);
-        return entriesRepository.save(entry);
+    public EntryDTO create(EntryDTO entryDTO) {
+
+        validate(entryDTO);
+
+        Entry entry = DTOToEntry(entryDTO);
+        entry.setEntryStatusEnum(EntryStatusEnum.PENDING);
+        entry.setCreateDate(LocalDate.now());
+        entry = entriesRepository.save(entry);
+
+        entryDTO = entryToDTO(entry);
+
+        return entryDTO;
     }
 
     @Override
     @Transactional
-    public Entry update(Entry entry) {
-        Objects.requireNonNull(entry.getId());
-        validate(entry);
-        return entriesRepository.save(entry);
+    public EntryDTO update(EntryDTO entryDTO) {
+        Entry entry = entriesRepository.findById(entryDTO.getId())
+                .orElseThrow(() -> new BusinessRuleException("Entry does not exist."));
+
+        validate(entryDTO);
+
+        entry.setEntryStatusEnum(EntryStatusEnum.PENDING);
+        entry.setEntryCodeEnum(entryDTO.getEntryCode());
+        entry.setYear(entryDTO.getYear());
+        entry.setMonth(entryDTO.getMonth());
+        entry.setDescription(entryDTO.getDescription());
+        entry.setValue(entryDTO.getValue());
+
+        entry = entriesRepository.save(entry);
+
+        entryDTO = entryToDTO(entry);
+
+        return entryDTO;
+    }
+
+    @Override
+    @Transactional
+    public void updateStatus(EntryDTO entryDTO) {
+        Entry entry = entriesRepository.findById(entryDTO.getId())
+                .orElseThrow(() -> new BusinessRuleException("Entry does not exist."));
+        entry.setEntryStatusEnum(entryDTO.getEntryStatus());
+        entriesRepository.save(entry);
     }
 
     @Override
     @Transactional
     public void delete(Long id) {
+        Entry entry = entriesRepository.findById(id)
+                .orElseThrow(() -> new BusinessRuleException("Entry does not exist."));
         entriesRepository.deleteById(id);
     }
 
     @Override
-    public List<Entry> search(Entry entryFilter) {
+    public List<EntryDTO> search(EntryDTO entryDTO) {
+
+        if(entryDTO.getUserId() == null)  {
+            throw new BusinessRuleException("User is not informed.");
+        }
+
+        User user = userRepository.findById(entryDTO.getUserId())
+                .orElseThrow( () -> new BusinessRuleException("User does not exist."));
+
+        Entry entryFilter = DTOToEntry(entryDTO);
         Example example = Example.of(entryFilter,
                 ExampleMatcher.matching()
                 .withIgnoreCase()
                 .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING));
 
-        return entriesRepository.findAll(example);
+        List<Entry> listEntry = entriesRepository.findAll(example);
+        List<EntryDTO> listEntryDTO = new ArrayList<EntryDTO>();
+        listEntry.forEach(entry->
+                listEntryDTO.add(entryToDTO(entry))
+        );
 
-    }
+        return listEntryDTO;
 
-    @Override
-    @Transactional
-    public void updateStatus(Entry entry, EntryStatusCode entryStatusCode) {
-        entry.setEntryStatusCode(entryStatusCode);
-        entriesRepository.save(entry);
     }
 
     @Override
@@ -75,8 +120,16 @@ public class EntryServiceImpl implements EntryService {
 
     @Override
     public BigDecimal getBalanceByUserId(Long id){
-        BigDecimal balanceIncome = entriesRepository.getBalanceByUserId(id, EntryCode.INCOME, EntryStatusCode.APPROVED);
-        BigDecimal balanceOutcome = entriesRepository.getBalanceByUserId(id, EntryCode.OUTCOME, EntryStatusCode.APPROVED);
+
+        if(id == null)  {
+            throw new BusinessRuleException("User is not informed.");
+        }
+
+        User user = userRepository.findById(id)
+                .orElseThrow( () -> new BusinessRuleException("User does not exist."));
+
+        BigDecimal balanceIncome = entriesRepository.getBalanceByUserId(id, EntryCodeEnum.INCOME, EntryStatusEnum.APPROVED);
+        BigDecimal balanceOutcome = entriesRepository.getBalanceByUserId(id, EntryCodeEnum.OUTCOME, EntryStatusEnum.APPROVED);
         if (balanceIncome == null){
             balanceIncome = BigDecimal.ZERO;
         }
@@ -86,8 +139,7 @@ public class EntryServiceImpl implements EntryService {
         return balanceIncome.subtract(balanceOutcome);
     };
 
-    @Override
-    public void validate(Entry entry) {
+    public void validate(EntryDTO entry) {
         if(entry.getDescription() == null || entry.getDescription().trim().equals("")){
             throw new BusinessRuleException("Fill up the description.");
         }
@@ -97,16 +149,52 @@ public class EntryServiceImpl implements EntryService {
         if(entry.getYear() == null || entry.getYear().toString().length() != 4)  {
             throw new BusinessRuleException("Inform a valid year.");
         }
-        if(entry.getUser() == null || entry.getUser().getId() == null)  {
+        if(entry.getUserId() == null)  {
             throw new BusinessRuleException("User is invalid.");
         }
         if(entry.getValue() == null || entry.getValue().compareTo(BigDecimal.ZERO) < 1)  {
             throw new BusinessRuleException("Value is invalid.");
         }
-        if(entry.getEntryCode() == null || (entry.getEntryCode()!= EntryCode.INCOME && entry.getEntryCode()!= EntryCode.OUTCOME) )  {
+        if(entry.getEntryCode() == null || (entry.getEntryCode()!= EntryCodeEnum.INCOME && entry.getEntryCode()!= EntryCodeEnum.OUTCOME) )  {
             throw new BusinessRuleException("Entry type is invalid.");
         }
-
-
     }
+
+    private Entry DTOToEntry(EntryDTO entryDTO){
+        User user = new User();
+        user.setId(entryDTO.getUserId());
+
+        userRepository.findById(user.getId()).orElseThrow( () -> new BusinessRuleException("User does not exist."));
+
+        Entry entry = Entry.builder()
+                .description(entryDTO.getDescription())
+                .month(entryDTO.getMonth())
+                .year(entryDTO.getYear())
+                .value(entryDTO.getValue())
+                .user(user)
+                .entryCodeEnum(entryDTO.getEntryCode())
+                .entryStatusEnum(entryDTO.getEntryStatus())
+                .build();
+
+        return entry;
+    }
+
+    private EntryDTO entryToDTO(Entry entry){
+
+        EntryDTO entryDTO = EntryDTO.builder()
+                .id(entry.getId())
+                .description(entry.getDescription())
+                .month(entry.getMonth())
+                .year(entry.getYear())
+                .value(entry.getValue())
+                .userId(entry.getUser().getId())
+                .entryCode(entry.getEntryCodeEnum())
+                .entryStatus(entry.getEntryStatusEnum())
+                .createDate(LocalDate.now())
+                .build();
+
+        return entryDTO;
+    }
+
+
 }

@@ -27,47 +27,26 @@ public class UserController {
 
     @PostMapping("/api/v1/user/authenticate")
     public ResponseEntity authenticate(@RequestBody UserDTO userDTO){
-        User user = User.builder()
-                .name(userDTO.getName())
-                .email(userDTO.getEmail())
-                .pswd(userDTO.getPswd())
-                .build();
         try {
-            User userAuthenticated = userService.authenticate(userDTO.getEmail(), userDTO.getPswd());
+
+            UserDTO userAuthenticated = userService.authenticate(userDTO);
             return new ResponseEntity(userAuthenticated, HttpStatus.OK);
+
         } catch (AutenticationErrorException e){
             return ResponseEntity.badRequest().body("User cannot sign in. " + e.getMessage());
         }
-
     }
 
     @PostMapping("/api/v1/user/signup")
     public ResponseEntity signup(@RequestBody UserDTO userDTO){
-        User user = User.builder()
-                .name(userDTO.getName())
-                .email(userDTO.getEmail())
-                .pswd(userDTO.getPswd())
-                .build();
-
         try {
-            User userSignedup = userService.signupUser(user);
-            return new ResponseEntity(userDTO, HttpStatus.CREATED);
+
+            UserDTO userSignedUp = userService.signupUser(userDTO);
+            return new ResponseEntity(userSignedUp, HttpStatus.CREATED);
+
         } catch (BusinessRuleException e){
             return ResponseEntity.badRequest().body("User cannot signup. " + e.getMessage());
         }
-
-    }
-
-    @GetMapping("/api/v1/user/getbalance/{id}")
-    public ResponseEntity getBalance (@PathVariable Long id){
-
-        Optional<User> user = userService.findById(id);
-        if (!user.isPresent()){
-            return new ResponseEntity(HttpStatus.NOT_FOUND);
-        }
-
-        BigDecimal balance = entryService.getBalanceByUserId(id);
-        return new ResponseEntity(balance, HttpStatus.OK);
 
     }
 
