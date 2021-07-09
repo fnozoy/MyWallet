@@ -90,7 +90,7 @@ public class EntryServiceImpl implements EntryService {
 
     @Override
     public List<EntryDTO> search(EntryDTO entryDTO) {
-        //TODO implements paginable
+        //TODO implements pageable
         if(entryDTO.getUserId() == null)  {
             throw new BusinessRuleException("User is not informed.");
         }
