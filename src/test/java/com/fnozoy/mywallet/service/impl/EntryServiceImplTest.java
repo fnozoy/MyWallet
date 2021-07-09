@@ -14,11 +14,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.springframework.data.domain.Example;
-import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.math.BigDecimal;
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -26,22 +24,20 @@ import java.util.Optional;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-
 @ExtendWith(SpringExtension.class)
 @ActiveProfiles("test")
 class EntryServiceImplTest {
 
-
-    UserRepository userRepository = mock(UserRepository.class);;
-    EntriesRepository entriesRepository = mock(EntriesRepository.class);;
+    UserRepository userRepository = mock(UserRepository.class);
+    EntriesRepository entriesRepository = mock(EntriesRepository.class);
     EntryServiceImpl entryServiceImpl = new EntryServiceImpl(entriesRepository, userRepository);
 
-        @Test
+    @Test
     public void validateCreateEntryWithSuccess() {
         User user = makeUser();
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
         Entry entry = makeEntry(user);
-        EntryDTO entryDTO = makeEntryDTO(user);
+        EntryDTO entryDTO = makeEntryDTO();
         when(entriesRepository.save(any(Entry.class))).thenReturn(entry);
 
         EntryDTO entryDTOAssert = entryServiceImpl.create(entryDTO);
@@ -53,7 +49,7 @@ class EntryServiceImplTest {
     public void validateCreateEntryWithInvalidUser() {
         User user = makeUser();
         Entry entry = makeEntry(user);
-        EntryDTO entryDTO = makeEntryDTO(user);
+        EntryDTO entryDTO = makeEntryDTO();
 
         when(entriesRepository.save(any(Entry.class))).thenReturn(entry);
 
@@ -65,7 +61,7 @@ class EntryServiceImplTest {
         User user = makeUser();
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
         Entry entry = makeEntry(user);
-        EntryDTO entryDTO = makeEntryDTO(user);
+        EntryDTO entryDTO = makeEntryDTO();
         entryDTO.setMonth(13); //should be any other on entryService.validate()
 
         when(entriesRepository.save(any(Entry.class))).thenReturn(entry);
@@ -77,7 +73,7 @@ class EntryServiceImplTest {
     public void validateUpdateEntryWithFailure() {
         User user = makeUser();
         Entry entry = makeEntry(user);
-        EntryDTO entryDTO = makeEntryDTO(user);
+        EntryDTO entryDTO = makeEntryDTO();
 
         when(entriesRepository.save(any(Entry.class))).thenReturn(entry);
 
@@ -88,7 +84,7 @@ class EntryServiceImplTest {
     public void validateUpdateEntryWithSuccess() {
         User user = makeUser();
         Entry entry = makeEntry(user);
-        EntryDTO entryDTO = makeEntryDTO(user);
+        EntryDTO entryDTO = makeEntryDTO();
         when(entriesRepository.findById(777L)).thenReturn(Optional.of(entry));
         when(entriesRepository.save(any(Entry.class))).thenReturn(entry);
 
@@ -101,7 +97,7 @@ class EntryServiceImplTest {
     public void validateUpdateStatusWithSuccess() {
         User user = makeUser();
         Entry entry = makeEntry(user);
-        EntryDTO entryDTO = makeEntryDTO(user);
+        EntryDTO entryDTO = makeEntryDTO();
         when(entriesRepository.findById(777L)).thenReturn(Optional.of(entry));
         when(entriesRepository.save(any(Entry.class))).thenReturn(entry);
 
@@ -114,7 +110,7 @@ class EntryServiceImplTest {
     public void validateUpdateStatusWithFailure() {
         User user = makeUser();
         Entry entry = makeEntry(user);
-        EntryDTO entryDTO = makeEntryDTO(user);
+        EntryDTO entryDTO = makeEntryDTO();
         when(entriesRepository.save(any(Entry.class))).thenReturn(entry);
 
         Assertions.assertThrows(BusinessRuleException.class, () -> entryServiceImpl.updateStatus(entryDTO) );
@@ -145,7 +141,7 @@ class EntryServiceImplTest {
         Entry entry = makeEntry(user);
         Entry entry2 = makeEntry(user);
         entry2.setId(778L);
-        EntryDTO entryDTO = makeEntryDTO(user);
+        EntryDTO entryDTO = makeEntryDTO();
         List<Entry> list = new ArrayList<>();
         list.add(entry);
         list.add(entry2);
@@ -165,8 +161,8 @@ class EntryServiceImplTest {
         Entry entry = makeEntry(user);
         Entry entry2 = makeEntry(user);
         entry2.setId(778L);
-        EntryDTO entryDTO = makeEntryDTO(user);
-        List<Entry> list = new ArrayList<Entry>();
+        EntryDTO entryDTO = makeEntryDTO();
+        List<Entry> list = new ArrayList<>();
         list.add(entry);
         list.add(entry2);
 
@@ -194,25 +190,22 @@ class EntryServiceImplTest {
         when(entriesRepository.getBalanceByUserId(1L, EntryCodeEnum.INCOME, EntryStatusEnum.APPROVED)).thenReturn(new BigDecimal(1000));
         when(entriesRepository.getBalanceByUserId(1L, EntryCodeEnum.OUTCOME, EntryStatusEnum.APPROVED)).thenReturn(new BigDecimal(100));
 
-        Assertions.assertThrows(BusinessRuleException.class, () -> {
-            entryServiceImpl.getBalanceByUserId(11111111L);
-        });
+        Assertions.assertThrows(BusinessRuleException.class, () -> entryServiceImpl.getBalanceByUserId(11111111L));
     }
 
     public User makeUser(){
-        User user = User.builder()
+        return User.builder()
                 .Id(1L)
                 .name("userid")
                 .email("userid@email.com")
                 .pswd("blablabla")
                 .build();
-        return user;
     }
 
     public Entry makeEntry(User user){
-        Entry entry = Entry.builder()
+        return Entry.builder()
                 .Id(777L)
-                .month(06)
+                .month(6)
                 .year(2021)
                 .entryCodeEnum(EntryCodeEnum.INCOME)
                 .entryStatusEnum(EntryStatusEnum.PENDING)
@@ -220,13 +213,12 @@ class EntryServiceImplTest {
                 .value(BigDecimal.valueOf(10000))
                 .user(user)
                 .build();
-        return entry;
     }
 
-    public EntryDTO makeEntryDTO(User user){
-        EntryDTO entryDTO = EntryDTO.builder()
+    public EntryDTO makeEntryDTO(){
+        return EntryDTO.builder()
                 .id(777L)
-                .month(06)
+                .month(6)
                 .year(2021)
                 .entryCode(EntryCodeEnum.INCOME)
                 .entryStatus(EntryStatusEnum.APPROVED)
@@ -234,7 +226,6 @@ class EntryServiceImplTest {
                 .value(BigDecimal.valueOf(10000))
                 .userId(1L)
                 .build();
-        return entryDTO;
     }
 
 }

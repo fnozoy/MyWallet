@@ -99,7 +99,7 @@ public class EntryRepositoryTest {
     }
 
     public Entry makeEntry(User user){
-        Entry entry = Entry.builder()
+        return Entry.builder()
                 .month(6)
                 .year(2021)
                 .entryCodeEnum(EntryCodeEnum.INCOME)
@@ -108,14 +108,12 @@ public class EntryRepositoryTest {
                 .value(BigDecimal.valueOf(10000))
                 .user(user)
                 .build();
-        return entry;
     }
     public User makeUser(){
-        User user = User.builder()
+        return User.builder()
                 .name("userid")
                 .email("userid@email.com")
                 .pswd("blablabla")
                 .build();
-        return user;
     }
 }

@@ -1,13 +1,11 @@
 package com.fnozoy.mywallet.api.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fnozoy.myWallet.api.controller.UserController;
 import com.fnozoy.myWallet.api.dto.UserDTO;
-import com.fnozoy.myWallet.service.EntryService;
+import com.fnozoy.myWallet.exceptions.AuthenticationErrorException;
+import com.fnozoy.myWallet.exceptions.BusinessRuleException;
 import com.fnozoy.myWallet.service.UserService;
-import lombok.SneakyThrows;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,14 +29,8 @@ public class UserControllerTest {
     @Autowired
     MockMvc mvc;
 
-    @Autowired
-    private ObjectMapper objectMapper;
-
     @MockBean
     UserService userService;
-
-    @MockBean
-    EntryService entryService;
 
     @Test
     public void validateUserAuthentication() throws Exception {
@@ -56,6 +48,24 @@ public class UserControllerTest {
                 .perform(request)
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("email").value(userDTO.getEmail()))
+                .andReturn();
+    }
+
+    @Test
+    public void validateWrongUserAuthentication() throws Exception {
+
+        UserDTO userDTO = makeUserDTO();
+        Mockito.when(userService.authenticate(Mockito.any(UserDTO.class))).thenThrow(AuthenticationErrorException.class);
+        String json = new ObjectMapper().writeValueAsString(userDTO);
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .post(API.concat("/authenticate"))
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json);
+        mvc
+                .perform(request)
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
                 .andReturn();
     }
 
@@ -78,14 +88,29 @@ public class UserControllerTest {
                 .andReturn();
     }
 
+    @Test
+    public void validateWrongUserSignup() throws Exception {
+
+        UserDTO userDTO = makeUserDTO();
+        Mockito.when(userService.signupUser(Mockito.any(UserDTO.class))).thenThrow(BusinessRuleException.class);
+        String json = new ObjectMapper().writeValueAsString(userDTO);
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .post(API.concat("/signup"))
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json);
+        mvc
+                .perform(request)
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
     public UserDTO makeUserDTO(){
-        UserDTO userDTO = UserDTO.builder()
+        return UserDTO.builder()
                 .email("george@jungle.com")
                 .name("George of the Jungle")
                 .pswd("123456")
                 .id(1L)
                 .build();
-        return userDTO;
     }
 
 }

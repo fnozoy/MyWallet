@@ -5,12 +5,10 @@ import com.fnozoy.myWallet.model.repository.UserRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -46,7 +44,7 @@ public class UserRepositoryTest {
 
     @Test
     public void verifyEmailDoesNotExist(){
-        userRepository.deleteAll();;
+        userRepository.deleteAll();
         boolean result = userRepository.existsByEmail("doesnotexist@email.com");
         Assertions.assertThat(result).isFalse();
     }
@@ -77,11 +75,10 @@ public class UserRepositoryTest {
 
     }
     public User makeUser() {
-        User user = User.builder()
+        return User.builder()
                 .name("User Name")
                 .email("user@email.com")
                 .pswd("123456")
                 .build();
-        return user;
     }
 }
