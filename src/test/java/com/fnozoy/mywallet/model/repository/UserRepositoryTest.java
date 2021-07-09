@@ -5,10 +5,12 @@ import com.fnozoy.myWallet.model.repository.UserRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -36,46 +38,30 @@ public class UserRepositoryTest {
 
     @Test
     public void verifyIfEmailAlreadyExists(){
-        //scenario
-        User user = User.builder().name("userid").email("userid@email.com").pswd("blablabla").build();
+        User user = makeUser();
         testEntityManager.persist(user);
-
-        //action
-        boolean result = userRepository.existsByEmail("userid@email.com");
-
-        //verify
+        boolean result = userRepository.existsByEmail("user@email.com");
         Assertions.assertThat(result).isTrue();
     }
 
     @Test
     public void verifyEmailDoesNotExist(){
-        //scenario
         userRepository.deleteAll();;
-
-        //action
         boolean result = userRepository.existsByEmail("doesnotexist@email.com");
-
-        //verify
         Assertions.assertThat(result).isFalse();
     }
 
     @Test
     public void persistUserOnDB(){
-        User user = User.builder()
-                .name("User Name")
-                .email("user@email.com")
-                .pswd("123456")
-                .build();
+        User user = makeUser();
         User userSave = userRepository.save(user);
+        boolean result = userRepository.existsByEmail("user@email.com");
+        Assertions.assertThat(result).isTrue();
     }
 
     @Test
     public void getUserByEmailWithSuccess(){
-        User user = User.builder()
-                .name("User Name")
-                .email("user@email.com")
-                .pswd("123456")
-                .build();
+        User user = makeUser();
         User userSave = userRepository.save(user);
         Optional<User> userFound = userRepository.findByEmail("user@email.com");
         Assertions.assertThat(userFound.isPresent()).isTrue();
@@ -83,16 +69,19 @@ public class UserRepositoryTest {
     }
 
     @Test
-    public void getUserByEmailWithFailure(){
+    public void getUserByEmailWithUserNotFound(){
+        User user = makeUser();
+        User userSave = userRepository.save(user);
+        Optional<User> userFound = userRepository.findByEmail("NoTfOuNd@eM4i1.C0M");
+        Assertions.assertThat(userFound.isPresent()).isFalse();
+
+    }
+    public User makeUser() {
         User user = User.builder()
                 .name("User Name")
                 .email("user@email.com")
                 .pswd("123456")
                 .build();
-        User userSave = userRepository.save(user);
-        Optional<User> userFound = userRepository.findByEmail("userxxxxx@email.com");
-        Assertions.assertThat(userFound.isPresent()).isFalse();
-
+        return user;
     }
-
 }

@@ -38,36 +38,42 @@ public class EntryRepositoryTest {
 
     @Test
     public void verifyIfSaveEntryWorks(){
-        //User user = User.builder().name("userid").email("userid@email.com").pswd("blablabla").build();
-        //testEntityManager.persist(user);
-        Entry entry = Entry.builder().month(6).year(2021).entryCodeEnum(EntryCodeEnum.INCOME).description("SALARY").value(BigDecimal.valueOf(10000)).build();
+        User user = makeUser();
+        Entry entry = makeEntry(user);
+        testEntityManager.persist(entry);
+
         Entry entrySave = entriesRepository.save(entry);
         Assertions.assertThat(entrySave.getId()).isNotNull();
     }
 
     @Test
     public void verifyIfDeleteEntryWorks(){
-        Entry entry = Entry.builder().month(6).year(2021).entryCodeEnum(EntryCodeEnum.INCOME).description("SALARY").value(BigDecimal.valueOf(10000)).build();
+        User user = makeUser();
+        Entry entry = makeEntry(user);
         testEntityManager.persist(entry);
+
         entry = testEntityManager.find(Entry.class, entry.getId());
         entriesRepository.delete(entry);
         Entry entryNull = testEntityManager.find(Entry.class, entry.getId());
         Assertions.assertThat(entryNull).isNull();
-
     }
 
     @Test
     public void verifyIfFindByIdWorks(){
-        Entry entry = Entry.builder().month(6).year(2021).entryCodeEnum(EntryCodeEnum.INCOME).description("SALARY").value(BigDecimal.valueOf(10000)).build();
+        User user = makeUser();
+        Entry entry = makeEntry(user);
         testEntityManager.persist(entry);
+
         Optional<Entry> entryOptional = entriesRepository.findById(entry.getId());
         Assertions.assertThat(entryOptional).isNotEmpty();
     }
 
     @Test
     public void verifyIfUpdateWorks(){
-        Entry entry = Entry.builder().month(6).year(2021).entryCodeEnum(EntryCodeEnum.INCOME).description("SALARY").value(BigDecimal.valueOf(10000)).build();
+        User user = makeUser();
+        Entry entry = makeEntry(user);
         testEntityManager.persist(entry);
+
         entry.setYear(2020);
         Entry entryUpdated = entriesRepository.save(entry);
         Assertions.assertThat(entryUpdated.getYear()).isEqualTo(2020);
@@ -75,16 +81,41 @@ public class EntryRepositoryTest {
 
     @Test
     public void verifyIfgetBalanceByUserIdWorks(){
-        User user = User.builder().name("userid").email("userid@email.com").pswd("blablabla").build();
+        User user = makeUser();
         testEntityManager.persist(user);
-        Entry entry = Entry.builder().month(6).year(2021).entryCodeEnum(EntryCodeEnum.INCOME).entryStatusEnum(EntryStatusEnum.APPROVED).description("SALARY").value(BigDecimal.valueOf(10000)).user(user).build();
+        Entry entry = makeEntry(user);
         testEntityManager.persist(entry);
-        entry = Entry.builder().month(6).year(2021).entryCodeEnum(EntryCodeEnum.OUTCOME).entryStatusEnum(EntryStatusEnum.APPROVED).description("EXPENSE").value(BigDecimal.valueOf(1000)).user(user).build();
-        testEntityManager.persist(entry);
+        Entry entry2 =makeEntry(user);
+        entry2.setEntryCodeEnum(EntryCodeEnum.OUTCOME);
+        entry2.setValue(new BigDecimal(1000));
+        entry2.setDescription("EXPENSE");
+        testEntityManager.persist(entry2);
+
         BigDecimal balance = entriesRepository.getBalanceByUserId(entry.getUser().getId(), EntryCodeEnum.INCOME, EntryStatusEnum.APPROVED);
         Assertions.assertThat(balance.compareTo(new BigDecimal("10000")) == 0);
+
         balance = entriesRepository.getBalanceByUserId(entry.getUser().getId(), EntryCodeEnum.OUTCOME, EntryStatusEnum.APPROVED);
         Assertions.assertThat(balance.compareTo(new BigDecimal("1000")) == 0);
     }
 
+    public Entry makeEntry(User user){
+        Entry entry = Entry.builder()
+                .month(6)
+                .year(2021)
+                .entryCodeEnum(EntryCodeEnum.INCOME)
+                .entryStatusEnum(EntryStatusEnum.APPROVED)
+                .description("SALARY")
+                .value(BigDecimal.valueOf(10000))
+                .user(user)
+                .build();
+        return entry;
+    }
+    public User makeUser(){
+        User user = User.builder()
+                .name("userid")
+                .email("userid@email.com")
+                .pswd("blablabla")
+                .build();
+        return user;
+    }
 }
