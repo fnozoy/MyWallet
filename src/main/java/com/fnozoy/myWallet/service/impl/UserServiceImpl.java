@@ -30,7 +30,17 @@ public class UserServiceImpl implements UserService {
             throw new AuthenticationErrorException("Password invalid.");
         }
 
+        userDTO = userToDTO(user);
+
         return userDTO;
+    }
+
+    public UserDTO userToDTO(User user){
+        return UserDTO.builder()
+                .name(user.getName())
+                .email(user.getEmail())
+                .id(user.getId())
+                .build();
     }
 
     @Override

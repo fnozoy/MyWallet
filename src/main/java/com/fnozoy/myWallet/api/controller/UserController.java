@@ -18,7 +18,7 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping("/api/v1/user/authenticate")
+    @PostMapping("/api/user/v1/authenticate")
     public ResponseEntity authenticate(@RequestBody UserDTO userDTO){
         try {
 
@@ -30,7 +30,7 @@ public class UserController {
         }
     }
 
-    @PostMapping("/api/v1/user/signup")
+    @PostMapping("/api/user/v1/signup")
     public ResponseEntity signup(@RequestBody UserDTO userDTO){
         try {
 

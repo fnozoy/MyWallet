@@ -29,7 +29,7 @@ import java.util.List;
 @AutoConfigureMockMvc
 public class EntryControllerTest {
 
-    static final String API = "/api/v1/entry";
+    static final String API = "/api/entry";
 
     @Autowired
     MockMvc mvc;
@@ -44,7 +44,7 @@ public class EntryControllerTest {
         String json = new ObjectMapper().writeValueAsString(entryDTO);
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-                .post(API.concat("/create"))
+                .post(API.concat("/v1/create"))
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json);
@@ -63,7 +63,7 @@ public class EntryControllerTest {
         String json = new ObjectMapper().writeValueAsString(entryDTO);
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-                .post(API.concat("/create"))
+                .post(API.concat("/v1/create"))
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json);
@@ -80,7 +80,7 @@ public class EntryControllerTest {
         String json = new ObjectMapper().writeValueAsString(entryDTO);
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-                .put(API.concat("/update"))
+                .put(API.concat("/v1/update"))
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json);
@@ -99,7 +99,7 @@ public class EntryControllerTest {
         String json = new ObjectMapper().writeValueAsString(entryDTO);
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-                .put(API.concat("/update"))
+                .put(API.concat("/v1/update"))
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json);
@@ -116,7 +116,7 @@ public class EntryControllerTest {
         String json = new ObjectMapper().writeValueAsString(entryDTO);
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-                .put(API.concat("/updatestatus"))
+                .put(API.concat("/v1/updatestatus"))
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json);
@@ -133,7 +133,7 @@ public class EntryControllerTest {
         String json = new ObjectMapper().writeValueAsString(entryDTO);
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-                .put(API.concat("/updatestatus"))
+                .put(API.concat("/v1/updatestatus"))
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json);
@@ -150,7 +150,7 @@ public class EntryControllerTest {
         String json = new ObjectMapper().writeValueAsString(entryDTO);
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-                .delete(API.concat("/delete/1"))
+                .delete(API.concat("/v1/delete/1"))
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json);
@@ -167,7 +167,7 @@ public class EntryControllerTest {
         String json = new ObjectMapper().writeValueAsString(entryDTO);
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-                .delete(API.concat("/delete/1"))
+                .delete(API.concat("/v1/delete/1"))
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json);
@@ -185,7 +185,7 @@ public class EntryControllerTest {
         Mockito.when(entryService.search(Mockito.any(EntryDTO.class))).thenReturn(list);
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-                .post(API.concat("/search?year=2021&userId=1"));
+                .post(API.concat("/v1/search?year=2021&userId=1"));
         mvc
                 .perform(request)
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -196,7 +196,7 @@ public class EntryControllerTest {
     public void validateSearchEntryWithFailure() throws Exception {
         Mockito.when(entryService.search(Mockito.any(EntryDTO.class))).thenThrow(BusinessRuleException.class);
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-                .post(API.concat("/search?year=2021&userId=1"));
+                .post(API.concat("/v1/search?year=2021&userId=1"));
         mvc
                 .perform(request)
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
@@ -209,7 +209,7 @@ public class EntryControllerTest {
         Mockito.when(entryService.getBalanceByUserId(1L)).thenReturn(balance);
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-                .get(API.concat("/getbalance/1"));
+                .get(API.concat("/v1/getbalance/1"));
         mvc
                 .perform(request)
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -221,7 +221,7 @@ public class EntryControllerTest {
         Mockito.when(entryService.getBalanceByUserId(1L)).thenThrow(BusinessRuleException.class);
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-                .get(API.concat("/getbalance/1"));
+                .get(API.concat("/v1/getbalance/1"));
         mvc
                 .perform(request)
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())

@@ -24,7 +24,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 @AutoConfigureMockMvc
 public class UserControllerTest {
 
-    static final String API = "/api/v1/user";
+    static final String API = "/api/user";
 
     @Autowired
     MockMvc mvc;
@@ -40,7 +40,7 @@ public class UserControllerTest {
         String json = new ObjectMapper().writeValueAsString(userDTO);
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-                .post(API.concat("/authenticate"))
+                .post(API.concat("/v1/authenticate"))
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json);
@@ -59,7 +59,7 @@ public class UserControllerTest {
         String json = new ObjectMapper().writeValueAsString(userDTO);
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-                .post(API.concat("/authenticate"))
+                .post(API.concat("/v1/authenticate"))
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json);
@@ -77,7 +77,7 @@ public class UserControllerTest {
         String json = new ObjectMapper().writeValueAsString(userDTO);
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-                .post(API.concat("/signup"))
+                .post(API.concat("/v1/signup"))
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json);
@@ -96,7 +96,7 @@ public class UserControllerTest {
         String json = new ObjectMapper().writeValueAsString(userDTO);
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-                .post(API.concat("/signup"))
+                .post(API.concat("/v1/signup"))
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json);

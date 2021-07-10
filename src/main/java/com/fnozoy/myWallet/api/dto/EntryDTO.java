@@ -2,10 +2,8 @@ package com.fnozoy.myWallet.api.dto;
 
 import com.fnozoy.myWallet.model.enums.EntryCodeEnum;
 import com.fnozoy.myWallet.model.enums.EntryStatusEnum;
-import lombok.Builder;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
@@ -13,6 +11,8 @@ import java.time.LocalDate;
 @Setter
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class EntryDTO {
     private Long id;
     private String description;

@@ -23,7 +23,7 @@ public class EntryController {
         this.entryService = entryService;
     }
 
-    @PostMapping("/api/v1/entry/create")
+    @PostMapping("/api/entry/v1/create")
     public ResponseEntity create (@RequestBody EntryDTO entryDTO){
         try {
 
@@ -35,7 +35,7 @@ public class EntryController {
         }
     }
 
-    @PutMapping("/api/v1/entry/update")
+    @PutMapping("/api/entry/v1/update")
     public ResponseEntity update (@RequestBody EntryDTO entryDTO){
         try {
 
@@ -47,7 +47,7 @@ public class EntryController {
         }
     }
 
-    @PutMapping("api/v1/entry/updatestatus")
+    @PutMapping("/api/entry/v1/updatestatus")
     public ResponseEntity updateStatus(@RequestBody EntryDTO entryDTO){
         try {
 
@@ -59,7 +59,7 @@ public class EntryController {
         }
     }
 
-    @DeleteMapping("api/v1/entry/delete/{id}")
+    @DeleteMapping("/api/entry/v1/delete/{id}")
     public ResponseEntity delete(@PathVariable Long id){
         try {
 
@@ -72,7 +72,7 @@ public class EntryController {
     }
 
     //TODO: change to receive a DTO
-    @PostMapping("api/v1/entry/search")
+    @PostMapping("/api/entry/v1/search")
     public ResponseEntity search(
             @RequestParam(value = "description", required = false) String description,
             @RequestParam(value = "month", required = false) Integer month,
@@ -99,7 +99,7 @@ public class EntryController {
         }
     }
 
-    @GetMapping("/api/v1/entry/getbalance/{id}")
+    @GetMapping("/api/entry/v1/getbalance/{id}")
     public ResponseEntity getBalance (@PathVariable Long id){
        try {
 
