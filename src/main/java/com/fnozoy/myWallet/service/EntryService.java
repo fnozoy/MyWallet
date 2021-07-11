@@ -8,6 +8,8 @@ public interface EntryService {
 
     EntryDTO create(EntryDTO entryDTO);
     EntryDTO update(EntryDTO entryDTO);
+    EntryDTO getEntryById(Long id);
+
     void delete(Long id);
     List<EntryDTO> search(EntryDTO entryFilter);
     void updateStatus(EntryDTO entryDTO);

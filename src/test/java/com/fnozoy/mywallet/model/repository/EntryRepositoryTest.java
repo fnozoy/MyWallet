@@ -1,5 +1,6 @@
 package com.fnozoy.mywallet.model.repository;
 
+import com.fnozoy.myWallet.exceptions.BusinessRuleException;
 import com.fnozoy.myWallet.model.entity.Entry;
 import com.fnozoy.myWallet.model.entity.User;
 import com.fnozoy.myWallet.model.enums.EntryCodeEnum;
@@ -94,6 +95,18 @@ public class EntryRepositoryTest {
 
         balance = entriesRepository.getBalanceByUserId(entry.getUser().getId(), EntryCodeEnum.OUTCOME, EntryStatusEnum.APPROVED);
         Assertions.assertThat(balance.compareTo(new BigDecimal("1000")) == 0);
+    }
+
+    @Test
+    public void verifyIfGetEntryByIDWorks(){
+        User user = makeUser();
+        Entry entry = makeEntry(user);
+        testEntityManager.persist(entry);
+
+        entry = entriesRepository.findById(1L)
+                .orElseThrow( () -> new BusinessRuleException("Entry not found"));
+
+        Assertions.assertThat(entry.getYear()).isEqualTo(2021);
     }
 
     public Entry makeEntry(User user){

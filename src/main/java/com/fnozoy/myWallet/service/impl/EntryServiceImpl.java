@@ -1,6 +1,7 @@
 package com.fnozoy.myWallet.service.impl;
 
 import com.fnozoy.myWallet.api.dto.EntryDTO;
+import com.fnozoy.myWallet.exceptions.AuthenticationErrorException;
 import com.fnozoy.myWallet.exceptions.BusinessRuleException;
 import com.fnozoy.myWallet.model.entity.Entry;
 import com.fnozoy.myWallet.model.entity.User;
@@ -118,7 +119,7 @@ public class EntryServiceImpl implements EntryService {
     public BigDecimal getBalanceByUserId(Long id){
 
         if(id == null)  {
-            throw new BusinessRuleException("User is not informed.");
+            throw new BusinessRuleException("User was not informed.");
         }
 
         User user = userRepository.findById(id)
@@ -133,6 +134,20 @@ public class EntryServiceImpl implements EntryService {
             balanceOutcome = BigDecimal.ZERO;
         }
         return balanceIncome.subtract(balanceOutcome);
+    }
+    @Override
+    public EntryDTO getEntryById(Long id){
+
+        if(id == null)  {
+            throw new BusinessRuleException("Entry was not informed.");
+        }
+
+        Entry entry = entriesRepository.findById(id)
+                .orElseThrow( () -> new BusinessRuleException("Entry not found"));
+
+        EntryDTO entryDTO = entryToDTO(entry);
+
+        return entryDTO;
     }
 
     public void validate(EntryDTO entry) {

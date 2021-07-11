@@ -71,8 +71,7 @@ public class EntryController {
         }
     }
 
-    //TODO: change to receive a DTO
-    @PostMapping("/api/entry/v1/search")
+    @GetMapping("/api/entry/v1/search")
     public ResponseEntity search(
             @RequestParam(value = "description", required = false) String description,
             @RequestParam(value = "month", required = false) Integer month,
@@ -100,15 +99,27 @@ public class EntryController {
     }
 
     @GetMapping("/api/entry/v1/getbalance/{id}")
-    public ResponseEntity getBalance (@PathVariable Long id){
-       try {
+    public ResponseEntity getBalance (@PathVariable Long id) {
+        try {
 
             BigDecimal balance = entryService.getBalanceByUserId(id);
             return new ResponseEntity(balance, HttpStatus.OK);
 
         } catch (BusinessRuleException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/api/entry/v1/getEntryById/{id}")
+    public ResponseEntity getEntryByid (@PathVariable Long id){
+        try {
+
+            EntryDTO entryDTO = entryService.getEntryById(id);
+            return new ResponseEntity(entryDTO, HttpStatus.OK);
+
+        } catch (BusinessRuleException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 }
 
-}

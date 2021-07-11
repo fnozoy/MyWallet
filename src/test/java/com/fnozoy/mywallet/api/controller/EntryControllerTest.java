@@ -185,7 +185,7 @@ public class EntryControllerTest {
         Mockito.when(entryService.search(Mockito.any(EntryDTO.class))).thenReturn(list);
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-                .post(API.concat("/v1/search?year=2021&userId=1"));
+                .get(API.concat("/v1/search?year=2021&userId=1"));
         mvc
                 .perform(request)
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -196,7 +196,7 @@ public class EntryControllerTest {
     public void validateSearchEntryWithFailure() throws Exception {
         Mockito.when(entryService.search(Mockito.any(EntryDTO.class))).thenThrow(BusinessRuleException.class);
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-                .post(API.concat("/v1/search?year=2021&userId=1"));
+                .get(API.concat("/v1/search?year=2021&userId=1"));
         mvc
                 .perform(request)
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
@@ -225,6 +225,32 @@ public class EntryControllerTest {
         mvc
                 .perform(request)
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andReturn();
+    }
+
+    @Test
+    public void validateGetBalanceWithWorks() throws Exception {
+        BigDecimal balance = new BigDecimal("1000");
+        Mockito.when(entryService.getBalanceByUserId(1L)).thenReturn(balance);
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .get(API.concat("/v1/getbalance/1"));
+        mvc
+                .perform(request)
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+    }
+
+    @Test
+    public void validateGetEntryByIdFails() throws Exception {
+        EntryDTO entryDTO = makeEntryDTO();
+        Mockito.when(entryService.getEntryById(1L)).thenReturn(entryDTO);
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .get(API.concat("/v1/getEntryById/1"));
+        mvc
+                .perform(request)
+                .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn();
     }
 
