@@ -19,4 +19,6 @@ App will allow the CRUD for incomes and outcomes of the month with date, value, 
 For every entry it will be necessary to approve or reject <br />
 Users will have a report to filter by </b>year, month, description or entry type</b>.<br />
 
-## `building in course`
+## `buil package to deploy`
+** using heroku <br />
+> mvnw clean package <br />
