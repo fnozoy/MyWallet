@@ -20,5 +20,5 @@ For every entry it will be necessary to approve or reject <br />
 Users will have a report to filter by </b>year, month, description or entry type</b>.<br />
 
 ## `buil package to deploy`
-** using heroku <br />
+using heroku <br />
 > mvnw clean package <br />
