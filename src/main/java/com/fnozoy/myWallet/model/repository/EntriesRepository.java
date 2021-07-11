@@ -3,10 +3,12 @@ package com.fnozoy.myWallet.model.repository;
 import com.fnozoy.myWallet.model.entity.Entry;
 import com.fnozoy.myWallet.model.enums.EntryCodeEnum;
 import com.fnozoy.myWallet.model.enums.EntryStatusEnum;
+import org.springframework.data.domain.Example;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import java.math.BigDecimal;
+import java.util.List;
 
 public interface EntriesRepository extends JpaRepository<Entry, Long> {
 

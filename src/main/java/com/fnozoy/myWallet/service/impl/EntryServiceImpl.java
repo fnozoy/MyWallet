@@ -107,6 +107,7 @@ public class EntryServiceImpl implements EntryService {
 
         List<Entry> listEntry = entriesRepository.findAll(example);
         List<EntryDTO> listEntryDTO = new ArrayList<>();
+        listEntry.sort(Comparator.comparing(Entry::getId));
         listEntry.forEach(entry->
                 listEntryDTO.add(entryToDTO(entry))
         );
