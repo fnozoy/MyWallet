@@ -1,7 +1,6 @@
-package com.fnozoy.mywallet.api.controller;
+package com.fnozoy.myWallet.api.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fnozoy.myWallet.api.controller.UserController;
 import com.fnozoy.myWallet.api.dto.UserDTO;
 import com.fnozoy.myWallet.exceptions.AuthenticationErrorException;
 import com.fnozoy.myWallet.exceptions.BusinessRuleException;

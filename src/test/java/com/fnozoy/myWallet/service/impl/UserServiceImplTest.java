@@ -1,4 +1,4 @@
-package com.fnozoy.mywallet.service.impl;
+package com.fnozoy.myWallet.service.impl;
 
 import com.fnozoy.myWallet.api.dto.UserDTO;
 import com.fnozoy.myWallet.exceptions.AuthenticationErrorException;
@@ -6,7 +6,6 @@ import com.fnozoy.myWallet.exceptions.BusinessRuleException;
 import com.fnozoy.myWallet.model.entity.User;
 import com.fnozoy.myWallet.model.repository.UserRepository;
 import com.fnozoy.myWallet.service.UserService;
-import com.fnozoy.myWallet.service.impl.UserServiceImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;

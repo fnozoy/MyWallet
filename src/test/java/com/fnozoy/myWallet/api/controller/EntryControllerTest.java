@@ -1,7 +1,6 @@
-package com.fnozoy.mywallet.api.controller;
+package com.fnozoy.myWallet.api.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fnozoy.myWallet.api.controller.EntryController;
 import com.fnozoy.myWallet.api.dto.EntryDTO;
 import com.fnozoy.myWallet.exceptions.BusinessRuleException;
 import com.fnozoy.myWallet.model.enums.EntryCodeEnum;

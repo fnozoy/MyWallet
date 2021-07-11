@@ -1,4 +1,4 @@
-package com.fnozoy.mywallet.service.impl;
+package com.fnozoy.myWallet.service.impl;
 
 import com.fnozoy.myWallet.api.dto.EntryDTO;
 import com.fnozoy.myWallet.exceptions.BusinessRuleException;
@@ -8,7 +8,6 @@ import com.fnozoy.myWallet.model.enums.EntryCodeEnum;
 import com.fnozoy.myWallet.model.enums.EntryStatusEnum;
 import com.fnozoy.myWallet.model.repository.EntriesRepository;
 import com.fnozoy.myWallet.model.repository.UserRepository;
-import com.fnozoy.myWallet.service.impl.EntryServiceImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
