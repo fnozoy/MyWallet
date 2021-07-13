@@ -25,7 +25,7 @@ import java.util.List;
 
 @ActiveProfiles("test")
 @WebMvcTest(controllers = EntryController.class)
-@AutoConfigureMockMvc
+@AutoConfigureMockMvc(addFilters = false)
 public class EntryControllerTest {
 
     static final String API = "/api/entry";
