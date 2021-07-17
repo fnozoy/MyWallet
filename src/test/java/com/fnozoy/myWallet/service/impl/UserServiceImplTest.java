@@ -51,9 +51,9 @@ public class UserServiceImplTest {
     @Test
     public void authenticateSuccessful(){
 
-        User user = User.builder().email("whatever@email.com").name("JohnDo").pswd("123456").Id(1L).build();
+        User user = User.builder().email("whatever@email.com").name("JohnDo").pswd("$2a$10$S1Xtjmgi2zaqC65iDGvJ9e2uanpm6McOE7b5/GQmsm5VG2WNXurm.").Id(1L).build();
         when(userRepository.findByEmail(Mockito.anyString())).thenReturn(Optional.of(user));
-        UserDTO userDTO = UserDTO.builder().email(user.getEmail()).name(user.getName()).pswd(user.getPswd()).build();
+        UserDTO userDTO = UserDTO.builder().email(user.getEmail()).name(user.getName()).pswd("123456").build();
         UserDTO userAssert = userService.authenticate(userDTO);
         org.assertj.core.api.Assertions.assertThat(userAssert).isNotNull();
     }

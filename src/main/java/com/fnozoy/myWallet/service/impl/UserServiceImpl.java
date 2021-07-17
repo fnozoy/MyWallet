@@ -7,6 +7,7 @@ import com.fnozoy.myWallet.model.entity.User;
 import com.fnozoy.myWallet.model.repository.UserRepository;
 import com.fnozoy.myWallet.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 
@@ -26,7 +27,7 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByEmail(userDTO.getEmail())
                 .orElseThrow( () -> new AuthenticationErrorException("Email not found"));
 
-        if (!user.getPswd().equals(userDTO.getPswd())){
+        if (!(new BCryptPasswordEncoder().matches(userDTO.getPswd(), user.getPswd()))){
             throw new AuthenticationErrorException("Password invalid.");
         }
 
@@ -51,7 +52,7 @@ public class UserServiceImpl implements UserService {
         User user = User.builder()
                 .name(userDTO.getName())
                 .email(userDTO.getEmail())
-                .pswd(userDTO.getPswd())
+                .pswd(new BCryptPasswordEncoder().encode(userDTO.getPswd()))
                 .build();
         user = userRepository.save(user);
         userDTO = UserDTO.builder()

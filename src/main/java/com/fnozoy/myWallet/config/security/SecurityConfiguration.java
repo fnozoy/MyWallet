@@ -1,5 +1,8 @@
-package com.fnozoy.myWallet.config.secutiry;
+package com.fnozoy.myWallet.config.security;
 
+import com.fnozoy.myWallet.api.controller.TokenAuthenticationFilter;
+import com.fnozoy.myWallet.model.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -17,7 +20,16 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 @Configuration
 @Profile(value = {"!test"})
-public class SecurityConfiguration extends org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter {
+public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
+
+    @Autowired
+    private AuthenticationService authenticationService;
+
+    @Autowired
+    private TokenService tokenService;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Override
     @Bean
@@ -25,21 +37,25 @@ public class SecurityConfiguration extends org.springframework.security.config.a
         return super.authenticationManager();
     }
 
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(authenticationService).passwordEncoder(new BCryptPasswordEncoder());
+    }
 
-    //Config authorization
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers(HttpMethod.POST, "/api/user/**").permitAll()
+                .antMatchers("/api/token/v1/auth").permitAll()
+                .antMatchers("/api/user/**").permitAll()
+                .antMatchers("/api/entry/v1/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/actuator/**").permitAll()
                 .anyRequest().authenticated()
                 .and().csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-//                .and().addFilterBefore(new AutenticacaoViaTokenFilter(tokenService, usuarioRepository), UsernamePasswordAuthenticationFilter.class)
-        ;
+                .and().addFilterBefore(new TokenAuthenticationFilter(tokenService, userRepository), UsernamePasswordAuthenticationFilter.class)
+                ;
     }
 
-    //config static resources (js, css, images, etc...)
     @Override
     public void configure(WebSecurity web) throws Exception {
         web.ignoring()
