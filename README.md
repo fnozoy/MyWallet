@@ -1,5 +1,6 @@
 # MyWallet
-My Wallet demo application with Java, Springboot, Postgresql, React JS
+My Wallet demo application with Java, Springboot, Postgresql, React JS<br />
+With JPA, Spring Security, JWT, pageable, etc
 
 
 ## `Use Cases`
