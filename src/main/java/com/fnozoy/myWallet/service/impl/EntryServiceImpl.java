@@ -13,6 +13,8 @@ import com.fnozoy.myWallet.service.EntryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -113,6 +115,32 @@ public class EntryServiceImpl implements EntryService {
         );
 
         return listEntryDTO;
+
+    }
+
+    public Page<Entry> searchPage(EntryDTO entryDTO, Pageable pageable) {
+        //TODO implements pageable
+        if(entryDTO.getUserId() == null)  {
+            throw new BusinessRuleException("User is not informed.");
+        }
+
+        User user = userRepository.findById(entryDTO.getUserId())
+                .orElseThrow( () -> new BusinessRuleException("User does not exist."));
+
+        Entry entryFilter = DTOToEntry(entryDTO);
+        Example<Entry> example = Example.of(entryFilter,
+                ExampleMatcher.matching()
+                        .withIgnoreCase()
+                        .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING));
+
+        Page<Entry> listEntry = entriesRepository.findAll(example, pageable);
+        //Page<EntryDTO> listEntryDTO = new ArrayList<>();
+        //listEntry.sort(Comparator.comparing(Entry::getId));
+        //listEntry.forEach(entry->
+        //        listEntryDTO.add(entryToDTO(entry))
+        //);
+
+        return listEntry;
 
     }
 

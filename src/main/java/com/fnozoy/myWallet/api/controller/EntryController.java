@@ -2,10 +2,14 @@ package com.fnozoy.myWallet.api.controller;
 
 import com.fnozoy.myWallet.api.dto.EntryDTO;
 import com.fnozoy.myWallet.exceptions.BusinessRuleException;
+import com.fnozoy.myWallet.model.entity.Entry;
 import com.fnozoy.myWallet.model.enums.EntryCodeEnum;
 import com.fnozoy.myWallet.model.enums.EntryStatusEnum;
 import com.fnozoy.myWallet.service.EntryService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -197,6 +201,30 @@ public class EntryController {
         } catch (BusinessRuleException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
+    }
+
+    @GetMapping("/api/entry/v3/search")
+    public Page<EntryDTO> searchAuthPage(
+            @RequestParam(value = "description", required = false) String description,
+            @RequestParam(value = "month", required = false) Integer month,
+            @RequestParam(value = "year", required = false) Integer year,
+            @RequestParam(value = "status", required = false) EntryStatusEnum entryStatusEnum,
+            @RequestParam(value = "code", required = false) EntryCodeEnum entryCodeEnum,
+            @RequestParam("userId") Long id,
+            @PageableDefault() Pageable pageable
+            ){
+        EntryDTO entryFilter = EntryDTO.builder()
+                .description(description)
+                .year(year)
+                .month(month)
+                .entryCode(entryCodeEnum)
+                .entryStatus(entryStatusEnum)
+                .userId(id)
+                .build();
+
+        Page<Entry> entryList = entryService.searchPage(entryFilter, pageable);
+        return EntryDTO.convert(entryList);
+
     }
 
     @GetMapping("/api/entry/v2/getbalance/{id}")
